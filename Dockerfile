@@ -3,12 +3,8 @@ FROM nginx:alpine
 # 必要なパッケージをインストール
 RUN apk add --no-cache bash
 
-# Nginxの設定ファイルをテンプレートとしてコピー
-COPY nginx.conf /etc/nginx/nginx.conf.template
-
-# エントリーポイントスクリプトをコピー
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+# Nginxの設定ファイルをコピー
+COPY nginx.conf /etc/nginx/nginx.conf
 
 # ログディレクトリを作成
 RUN mkdir -p /var/log/nginx && \
@@ -16,8 +12,8 @@ RUN mkdir -p /var/log/nginx && \
     touch /var/log/nginx/error.log && \
     chown -R nginx:nginx /var/log/nginx
 
-# デフォルトのポート（Renderが動的に変更）
-ENV PORT=3007
+# Railwayはポート3000をデフォルトで期待
+EXPOSE 3000
 
-# エントリーポイントを設定
-ENTRYPOINT ["/entrypoint.sh"]
+# Nginxを起動
+CMD ["nginx", "-g", "daemon off;"]
